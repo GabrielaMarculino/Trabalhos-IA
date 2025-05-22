@@ -1,0 +1,42 @@
+arad zerind:75 sibiu:140 timisoara:118
+zerind arad:75 oradea:71
+oradea zerind:71 sibiu:151
+sibiu arad:140 oradea:151 fagaras:99 rimnicu:80
+timisoara arad:118 lugoj:111
+lugoj timisoara:111 mehadia:70
+mehadia lugoj:70 dobreta:75
+dobreta mehadia:75 craiova:120
+craiova dobreta:120 rimnicu:146 pitesti:138
+rimnicu sibiu:80 craiova:146 pitesti:97
+fagaras sibiu:99 bucharest:211
+pitesti rimnicu:97 craiova:138 bucharest:101
+bucharest fagaras:211 pitesti:101 giurgiu:90 urziceni:85
+giurgiu bucharest:90
+urziceni bucharest:85 hirsova:98 vaslui:142
+hirsova urziceni:98 eforie:86
+eforie hirsova:86
+vaslui urziceni:142 iasi:92
+iasi vaslui:92 neamt:87
+neamt iasi:87
+
+heuristics
+arad 366
+bucharest 0
+craiova 160
+dobreta 242
+eforie 161
+fagaras 176
+giurgiu 77
+hirsova 151
+iasi 226
+lugoj 244
+mehadia 241
+neamt 234
+oradea 380
+pitesti 100
+rimnicu 193
+sibiu 253
+timisoara 329
+urziceni 80
+vaslui 199
+zerind 374
