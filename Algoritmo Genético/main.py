@@ -3,8 +3,35 @@
 # TRABALHO III de Inteligência Artificial
 # Profº Drº Osvaldo Jacques
 #
-# Implementação do Algoritmo Genético (GA) com animação em tempo real
-# para resolver o Problema do Caixeiro Viajante (TSP).
+# Implementação do Algoritmo Genético (GA) Interativo
+# com Semente Aleatória (Random Seed) para testes.
+# =============================================================================
+
+# =============================================================================
+#  #  COMO TESTAR 
+# =============================================================================
+#
+# Para comparar o impacto de diferentes parâmetros (ex: aumentar
+# a 'População' ou a 'Elite'), é crucial usar a mesma "Semente".
+#
+# Exemplo de Teste Comparativo:
+# 1. Execução 1:
+#    - População: 100
+#    - Elite: 20
+#    - Semente: 42 (anote o resultado/distância final)
+#
+# 2. Execução 2:
+#    - População: 500  <- (Valor alterado)
+#    - Elite: 100     <- (Valor alterado)
+#    - Semente: 42 (A semente DEVE ser a mesma)
+#
+# Ao usar a mesma semente (ex: 42), o mapa de cidades e toda a
+# "sorte" aleatória serão idênticos. Isso garante que qualquer
+# melhoria no resultado foi *realmente* por causa da mudança nos
+# parâmetros (População/Elite), e não por "sorte".
+#
+# Deixar a semente em branco (apertar ENTER) gera um novo
+# problema aleatório a cada execução.
 # =============================================================================
 
 import math
@@ -53,26 +80,18 @@ def classificar_rotas(populacao, cidades):
 
 def selecao_roleta(pop_classificada):
     """
-    Seleciona um "pai" usando o método da Roleta. 
+    Seleciona um "pai" usando o método da Roleta.
     (Conforme material do professor)
-    Os indivíduos com maior fitness têm maior chance de serem escolhidos. [cite: 316, 509]
     """
-    
-    # 1. Calcula o fitness total da população
     fitness_total = sum(fitness for fitness, rota in pop_classificada)
-    
-    # 2. Escolhe um "ponto de corte" aleatório, entre 0 e o fitness total
-    # (Imagina que isso é "girar a roleta")
     ponto_sorteado = random.uniform(0, fitness_total)
     
-    # 3. Itera pela população somando o fitness até encontrar o sorteado
     soma_fitness_atual = 0
     for fitness, rota in pop_classificada:
         soma_fitness_atual += fitness
         if soma_fitness_atual >= ponto_sorteado:
-            return rota # Retorna a *rota* (indivíduo) sorteada
+            return rota
             
-    # Garantia de retorno caso haja algum problema de ponto flutuante
     return pop_classificada[0][1]
 
 def crossover_ordenado(pai1, pai2):
@@ -159,15 +178,89 @@ def algoritmo_genetico_generator(cidades, tam_populacao, tam_elite, taxa_mutacao
 
 if __name__ == "__main__":
 
-    # Parâmetros do Problema 
-    NUM_CIDADES = 25
+    print("="*60)
+    print("  Configuração dos Parâmetros do Algoritmo Genético (TSP)")
+    print("="*60)
+    print("Pressione ENTER para usar o valor padrão (ex: [25]).\n")
 
-    # Parâmetros do Algoritmo Genético 
-    TAM_POPULACAO = 100
-    TAM_ELITE = 20
-    TAXA_MUTACAO = 0.01
+    # Parâmetro 1: Número de Cidades
+    while True:
+        try:
+            val = input("1. Número de Cidades [padrão: 25]: ")
+            NUM_CIDADES = int(val) if val else 25
+            if NUM_CIDADES < 3:
+                print("ERRO: O número de cidades deve ser pelo menos 3.")
+            else:
+                break
+        except ValueError:
+            print("ERRO: Por favor, digite um número inteiro.")
 
-    # Gera coordenadas aleatórias para as cidades num plano de 100x100
+    # Parâmetro 2: Tamanho da População
+    while True:
+        try:
+            val = input("2. Tamanho da População [padrão: 100]: ")
+            TAM_POPULACAO = int(val) if val else 100
+            if TAM_POPULACAO < 10:
+                print("ERRO: A população deve ter pelo menos 10 indivíduos.")
+            else:
+                break
+        except ValueError:
+            print("ERRO: Por favor, digite um número inteiro.")
+
+    # Parâmetro 3: Tamanho da Elite
+    while True:
+        try:
+            val = input(f"3. Tamanho da Elite [padrão: 20]: ")
+            TAM_ELITE = int(val) if val else 20
+            if TAM_ELITE >= TAM_POPULACAO:
+                print(f"ERRO: A elite ({TAM_ELITE}) não pode ser maior ou igual à população ({TAM_POPULACAO}).")
+            elif TAM_ELITE < 0:
+                print("ERRO: A elite não pode ser negativa.")
+            else:
+                break
+        except ValueError:
+            print("ERRO: Por favor, digite um número inteiro.")
+
+    # Parâmetro 4: Taxa de Mutação
+    while True:
+        try:
+            val = input("4. Taxa de Mutação (ex: 0.01) [padrão: 0.01]: ")
+            TAXA_MUTACAO = float(val) if val else 0.01
+            if not (0.0 <= TAXA_MUTACAO <= 1.0):
+                print("ERRO: A taxa de mutação deve estar entre 0.0 e 1.0.")
+            else:
+                break
+        except ValueError:
+            print("ERRO: Por favor, digite um número (ex: 0.01).")
+            
+    # Parâmetro 5: Semente Aleatória
+    while True:
+        try:
+            val = input("5. Semente Aleatória (ex: 42) [deixe em branco para aleatório]: ")
+            # Se o usuário digitar algo, converte para int. Se deixar em branco, SEMENTE será None.
+            SEMENTE = int(val) if val else None
+            break
+        except ValueError:
+            print("ERRO: Por favor, digite um número inteiro (ou deixe em branco).")
+
+
+    print("\n" + "-"*60)
+    print("Parâmetros configurados. Iniciando o algoritmo...")
+    print(f"Cidades: {NUM_CIDADES} | População: {TAM_POPULACAO} | Elite: {TAM_ELITE} | Mutação: {TAXA_MUTACAO}")
+
+    if SEMENTE is not None:
+        print(f"Usando semente aleatória fixa: {SEMENTE} (Resultados serão reprodutíveis)")
+        random.seed(SEMENTE)         # Semente para a biblioteca 'random'
+        np.random.seed(SEMENTE)  # Semente para a biblioteca 'numpy.random'
+    else:
+        print("Executando com semente aleatória (Resultados variarão a cada execução)")
+    
+    print("Pressione 'q' na janela da animação para fechar.")
+    print("="*60 + "\n")
+    
+
+    # Gera coordenadas aleatórias para as cidades
+    # Se a semente foi definida, np.random.rand() vai gerar o *mesmo* mapa sempre
     cidades = np.random.rand(NUM_CIDADES, 2) * 100
 
     # Configura os gráficos (plots)
@@ -182,25 +275,25 @@ if __name__ == "__main__":
         taxa_mutacao=TAXA_MUTACAO
     )
     
+    # Pega o primeiro estado (Geração 0)
     rota_inicial, dist_inicial, _ = next(ga_generator)
 
+    # Plot 1: Rota Inicial
     ax1.set_title(f'Rota Inicial (Melhor da 1ª Geração)\nDistância: {dist_inicial:.2f}')
     ax1.plot(cidades[:, 0], cidades[:, 1], 'ro')
     
-    # Para fechar o ciclo, o último ponto do gráfico deve ser igual ao primeiro.
     x_coords_inicial = [cidades[i][0] for i in rota_inicial] + [cidades[rota_inicial[0]][0]]
     y_coords_inicial = [cidades[i][1] for i in rota_inicial] + [cidades[rota_inicial[0]][1]]
     ax1.plot(x_coords_inicial, y_coords_inicial, 'b-')
 
+    # Plot 2: Animação
     ax2.set_title('Otimizando...')
     ax2.plot(cidades[:, 0], cidades[:, 1], 'ro')
     linha_rota, = ax2.plot([], [], 'g-') # Linha verde para o GA
 
     def atualizar_frame(frame_data):
         """Função chamada a cada novo 'yield' do gerador."""
-        
         rota_atual, dist_atual, geracao = frame_data
-
         ax2.set_title(f'Otimizando (Algoritmo Genético)\nGeração: {geracao} | Melhor Dist.: {dist_atual:.2f}')
         
         x_coords = [cidades[i][0] for i in rota_atual] + [cidades[rota_atual[0]][0]]
@@ -209,6 +302,7 @@ if __name__ == "__main__":
         
         return linha_rota,
 
+    # Cria a animação
     ani = FuncAnimation(
         fig, 
         atualizar_frame, 
